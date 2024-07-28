@@ -41,8 +41,8 @@ router.post("/", Validate(loginSchema), async (req, res) => {
       {
         username: user.username,
       },
-      "mumbai2002", // Replace with your actual secret key
-      { expiresIn: "1h" }, // Optional: set an expiration time for the token
+      "mumbai2002",
+      { expiresIn: "1h" },
     );
 
     res.json({ token });

@@ -1,14 +1,9 @@
 const { z } = require("zod");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const express = require("express");
-
-const router = express.Router();
 
 const Validate = (schema) => {
   return (req, res, next) => {
     if (!req.body) {
-      return res.status(400).json({ message: "request body is required" });
+      return res.status(400).json({ message: "Request body is required" });
     }
 
     try {
@@ -17,11 +12,11 @@ const Validate = (schema) => {
     } catch (err) {
       return res
         .status(400)
-        .json({ message: "invalid request body", errors: err.errors });
+        .json({ message: "Invalid request body", errors: err.errors });
     }
   };
 };
+
 module.exports = {
-  router,
   Validate,
 };

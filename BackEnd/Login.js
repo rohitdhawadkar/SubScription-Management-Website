@@ -2,17 +2,17 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { z } = require("zod");
-const { Validate, route } = require("./MiddleWare");
-const pool = require("./DatabaseConfig");
+const { Validate } = require("./MiddleWare");
+const pool = require("./DataBaseconfig");
 
 const router = express.Router();
 
 const loginSchema = z.object({
-  login: z.union([z.string().email(), z.string().min(3)]), //either email or username
+  login: z.union([z.string().email(), z.string().min(3)]), // Either email or username
   password: z.string().min(8),
 });
 
-router.post("/login", Validate(loginSchema), async (req, res) => {
+router.post("/", Validate(loginSchema), async (req, res) => {
   try {
     const { login, password } = req.body;
 
@@ -28,13 +28,13 @@ router.post("/login", Validate(loginSchema), async (req, res) => {
     const user = result.rows[0];
 
     if (!user) {
-      return res.status(400).json({ message: "user does not exist" });
+      return res.status(400).json({ message: "User does not exist" });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(400).json({ message: "wrong password" });
+      return res.status(400).json({ message: "Wrong password" });
     }
 
     const token = jwt.sign(
@@ -47,7 +47,8 @@ router.post("/login", Validate(loginSchema), async (req, res) => {
 
     res.json({ token });
   } catch (err) {
-    res.status(400).json("error occured during login");
+    console.error("Error occurred during login:", err);
+    res.status(500).json({ message: "Error occurred during login" });
   }
 });
 

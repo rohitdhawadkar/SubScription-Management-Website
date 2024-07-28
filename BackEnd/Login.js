@@ -28,14 +28,14 @@ router.post("/login", Validate(loginSchema), async (req, res) => {
     const user = result.rows[0];
 
     if (!user) {
-      res.status(400).json({ "user does not exist"});
+      return res.status(400).json({ "user does not exist"});
 
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      res.status(400).json({ "wrong password"});
+      return res.status(400).json({ "wrong password"});
 
     }
 

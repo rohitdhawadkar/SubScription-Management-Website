@@ -8,17 +8,22 @@ const pool = require("./DatabaseConfig");
 const router = express.Router();
 
 const loginSchema = z.object({
-  username: z.string().email(),
+  login: z.union([z.string().email(), z.string().min(3)]),//either email or username
   password: z.string().min(8),
 });
 
 router.post("/login", Validate(loginSchema), async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { login, password } = req.body;
 
-    const result = await pool.query("SELECT * FROM users WHERE username=$1", [
-      username,
-    ]);
+    let result;
+    if (login.includes("@")) {
+      result = await pool.query("SELECT * FROM users WHERE email=$1", [login]);
+    } else {
+      result = await pool.query("SELECT * FROM users WHERE username=$1", [login]);
+
+    }
+
 
     const user = result.rows[0];
 
@@ -29,7 +34,7 @@ router.post("/login", Validate(loginSchema), async (req, res) => {
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
-    if (!password) {
+    if (!passwordMatch) {
       res.status(400).json({ "wrong password"});
 
     }

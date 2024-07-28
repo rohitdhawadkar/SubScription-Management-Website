@@ -8,15 +8,20 @@ const router = express.Router();
 const Validate = (schema) => {
   return (req, res, next) => {
     if (!req.body) {
-      return res.status(400).json({ "request body is required"});
+      return res.status(400).json({ message: "request body is required" });
     }
 
     try {
       schema.parse(req.body);
       next();
     } catch (err) {
-      return res.status(400).json({ "invalid request body", errors: err.errors })
+      return res
+        .status(400)
+        .json({ message: "invalid request body", errors: err.errors });
     }
   };
 };
-module.exports = router;
+module.exports = {
+  router,
+  Validate,
+};

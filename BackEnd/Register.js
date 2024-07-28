@@ -13,33 +13,36 @@ const RegisterSchema = z.object({
   password: z.string().min(8),
 });
 
-router.post("/register", Validate(RegisterSchema), async (req, res) => {
+router.post("/", Validate(RegisterSchema), async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    const usernameResult = await pool.query("SELECT * From users WHERE username=$1", [username]);
+    const usernameResult = await pool.query(
+      "SELECT * From users WHERE username=$1",
+      [username],
+    );
 
     if (usernameResult.rows.length > 0) {
-      return res.status(400).json({ "username already exist"});
+      return res.status(400).json({ message: "username already exist" });
     }
 
-    const emailResult = await pool.query("SELECT * From users WHERE email=$1", [email]);
+    const emailResult = await pool.query("SELECT * From users WHERE email=$1", [
+      email,
+    ]);
 
     if (emailResult.rows.length > 0) {
-      return res.status(400).json({ "email already exist"});
+      return res.status(400).json({ message: "email already exist" });
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    await pool.query("INSERT INTO users (username,email,password) VALUES ($1,$2,$3)", [username, email, passwordHash]);
-    res.status(400).json({ "registration succesfull"})
-
-
-
+    await pool.query(
+      "INSERT INTO users (username,email,password) VALUES ($1,$2,$3)",
+      [username, email, passwordHash],
+    );
+    res.status(400).json({ message: "registration succesfull" });
   } catch (err) {
     res.json("error occured during registration");
   }
-
-
 });
 module.exports = router;

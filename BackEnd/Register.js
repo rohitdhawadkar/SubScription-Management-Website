@@ -42,3 +42,4 @@ router.post("/register", Validate(RegisterSchema), async (req, res) => {
 
 
 });
+module.exports = router;

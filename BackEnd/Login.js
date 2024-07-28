@@ -39,10 +39,14 @@ router.post("/login", Validate(loginSchema), async (req, res) => {
 
     }
 
-    const token = jwt.sign({
-      UserId: user.id,
-      username: user.username
-    }, Mumbai2002);
+    const token = jwt.sign(
+      {
+        username: user.username,
+      },
+      "YourSecretKey", // Replace with your actual secret key
+      { expiresIn: '1h' } // Optional: set an expiration time for the token
+    );
+
 
     res.json({ token });
 
